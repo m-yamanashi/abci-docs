@@ -59,20 +59,6 @@ The available resource type and number of nodes for each service are as follows.
 | Service | Resource type name | Number of nodes |
 |:--|:--|--:|
 | Reserved  | rt\_HF       | 1-(number of reserved nodes) |
-<!--| Spot      | rt\_F       | 1-512 |
-|           | rt\_G.large | 1 |
-|           | rt\_G.small | 1 |
-|           | rt\_C.large | 1 |
-|           | rt\_C.small | 1 |
-|           | rt\_AF      | 1-64 |
-|           | rt\_AG.small| 1 |-->
-<!--| On-demand | rt\_F       | 1-32 |
-|           | rt\_G.large | 1 |
-|           | rt\_G.small | 1 |
-|           | rt\_C.large | 1 |
-|           | rt\_C.small | 1 |
-|           | rt\_AF      | 1-4 |
-|           | rt\_AG.small| 1 |-->
 
 ### Elapsed time and node-time product limits
 
@@ -82,7 +68,6 @@ There is an elapsed time limit (executable time limit) for jobs depending on the
 |:--|:--|:--|
 | Spot      | rt\_HF, rt\_HG, rt\_HC | 168:00:00/1:00:00 |
 | On-demand | rt\_HF, rt\_HG, rt\_HC | 12:00:00/1:00:00 |
-<!--| Reserved  | rt\_HF | unlimited |-->
 
 In addition, when executing a job that uses multiple nodes in On-demand or Spot services, there are the following restrictions on the node-time product (execution time &times; number of used nodes).
 
@@ -114,94 +99,51 @@ Jobs submitted to reserved nodes in the Reserved service are not included in the
 | rt_HF | 736 |
 | rt_HG | 240 |
 | rt_HC | 60 |
-<!--
-### Execution Priority {#execution-priority}
-
-Each job service allows you to specify a priority when running a job, as follows:
-
-| Service | Description | POSIX priority | POSIX priority coefficient |
-|:--|:--|:--|:--|
-| On-demand | -450 | default (unchangable) | 1.0 |
-| Spot      | -500 | default               | 1.0 |
-|           | -400 | high priority         | 1.5 |
-| Reserved  | -500 | default (unchangable) | NA  |
-
-In On-demand service, the priority is fixed at `-450` and cannot be changed.
-
-In Spot service, you can specify `-400` to your job, so as to execute it in higher priority to other jobs. However, you will be charged according to the POSIX priority coefficient.
-
-In Reserved service, the priority is fixed at `-500` and cannot be changed for both interactive and batch jobs.
--->
 
 ## Job Execution Options
 
-Use `qrsh` command to run interactive jobs and batch jobs.
+Use `qsub` command to run interactive jobs and batch jobs.
 
 The major options of the `qsub` command are follows.
 
 | Option | Description |
 |:--|:--|
-| -I | Interactive job is executed. |
-| -p *group* | Specify ABCI user group. You can only specify the ABCI group to which your ABCI account belongs. |
-| -q *resource_type*=*number* | Specify resource type |
+| -P *group* | Specify ABCI user group. You can only specify the ABCI group to which your ABCI account belongs. (mandatory) |
+| -q *resource_type* | Specify resource type (mandatory) |
+| -l select=*num*:ncpus=*num_cpus* | Specify the number of nodes with *num* and the number of CPUs corresponding to each resource type with *num_cpus*. For *num_cpus*, set 192 for rt_HF, 32 for rt_HC, and 16 for rt_HG. (mandatory) |
 | -l walltime=[*HH:MM:*]*SS* | Specify elapsed time by [*HH:MM:*]*SS*. When execution time of job exceed specified time, job is rejected. |
-| -j oe | Combine standard output and standard error output into a single file. |
-
-<!--
-In addition, the following options can be used as extended options:
-
-| Option | Description |
-|:--|:--|
-| -l USE\_SSH=*1*<br>-v SSH\_PORT=*port*<br>-v ALLOW\_GROUP\_SSH=*1* | Enable SSH login to the compute nodes. See [SSH Access to Compute Nodes](appendix/ssh-access.md) for details. |
-| -l USE\_BEEOND=*1*<br>-v BEEOND\_METADATA\_SERVER=*num*<br>-v BEEOND\_STORAGE\_SERVER=*num* | Submit a job with using BeeGFS On Demand (BeeOND). See [Using as a BeeOND storage](storage.md#beeond-storage) for details. |
-| -v GPU\_COMPUTE\_MODE=*mode* | Change GPU Compute Mode. See [Changing GPU Compute Mode](gpu.md#changing-gpu-compute-mode) for details. |
-| -l docker<br>-l docker\_images | Submit a job with a Docker container. See [Docker](containers.md#docker) for details. |
-| -l USE_EXTRA_NETWORK=1 | To allow a calculation node assigned to a job not to be a minimum hop configuration. If this option is specified for a job with a short execution time, depending on the availability of computing resources, the job may be started earlier than when it was not specified, but communication performance may deteriorate. |
-| -v ALLOW\_GROUP\_QDEL=*1* | Allow other accounts in the ABCI group specified when the job was submitted to delete this job. |
--->
+| -N name | Specify the job name with *name*. The default is the job script name. |
 
 ## Interactive Jobs
 
 To run an interactive job, add the `-I` option to the `qsub` command.
 
 ```
-$ qsub -I -p group -q resource_type=number [option]
+$ qsub -I -P group -q resource_type -l select=num:ncpus=num_cpus [options]
 ```
 
 Example) Executing an interactive job (On-demand service)
 
 ```
-[username@int1 ~]$ qsub -p grpname -q rt_HF -l walltime=1:00:00
-[username@g0001 ~]$ 
+[username@int1 ~]$ qsub -I -P grpname -q rt_HF -l select=1:ncpus=192
+[username@hnode001 ~]$ 
 ```
 
 !!! note
     If ABCI point is insufficient when executing an interactive job with On-demand service, the execution is failed.
-<!--
-To execute an application using X-Window, first you need to login with the X forwading option (-X or -Y option) as follows:
 
-```
-[yourpc ~]$ ssh -XC -p 10022 -l username localhost
-```
-
-After that, run an interactive job with specifying `-pty yes -display $DISPLAY -v TERM /bin/bash`:
-
-```
-[username@int1 ~]$ qrsh -g grpname -l rt_F=1 -l h_rt=1:00:00 -pty yes -display $DISPLAY -v TERM /bin/bash
-[username@g0001 ~]$ xterm <- execute X application
-```
--->
 ## Batch Jobs
 
 To run a batch job on the ABCI System, you need to make a job script in addition to execution program.
 The job script is described job execute option, such as resource type, elapsed time limit, etc., and executing command sequence.
 
 ```bash
-#!/bin/bash
-
-#PBS -q rt_HG
+#!/bin/sh
+#PBS -q rt_HF
+#PBS -l select=1:ncpus=192
 #PBS -l walltime=1:23:45
-#PBS  -j oe
+#PBS -P grpname
+
 cd ${PBS_O_WORKDIR}
 
 [Initialization of Environment Modules]
@@ -212,36 +154,34 @@ cd ${PBS_O_WORKDIR}
 Example) Sample job script executing program with CUDA
 
 ```bash
-#!/bin/bash
-
-#PBS -q rt_HG
+#!/bin/sh
+#PBS -q rt_HF
+#PBS -l select=1:ncpus=192
 #PBS -l walltime=1:23:45
-#PBS  -j oe
+#PBS -P grpname
+
 cd ${PBS_O_WORKDIR}
 
 source /etc/profile.d/modules.sh
-module load cuda/10.2/10.2.89
+module load cuda/12.6/12.6.1
 ./a.out
 ```
 
 ### Submit a batch job
 
-To submit a batch job, use the `qsub` command.
+To submit a batch job, use the `qsub` command. The job ID is displayed after submission. 
 
 ```
-$ qsub -p group [option] job_script
+$ qsub job_script
 ```
 
 Example) Submission job script run.sh as a batch job (Spot service)
 
 ```
-[username@int1 ~]$ qsub -p grpname run.sh
-Your job 12345 ("run.sh") has been submitted
+[username@int1 ~]$ qsub run.sh
+1234.pbs1
 ```
-<!--
-!!! warning
-    The `-g` option cannot specify in job script.
--->
+
 !!! note
     If ABCI point is insufficient when executing a batch job with Spot service, the execution is failed.
 
@@ -249,19 +189,7 @@ Your job 12345 ("run.sh") has been submitted
 
 If the batch job submission is successful, the exit status of the `qsub` command will be `0`.
 If it fails, it will be a non-zero value and an error message will appear.
-<!--
-The following is a part of the error messages.
-If you want to confirm for errors not listed in the following table, please [contact](./contact.md) ABCI Support.
 
-| Error message | Exit status | Description |
-|:--|:--|:--|
-| qsub: ERROR: error: ERROR! invalid option argument "*XXX*" | 255 | An invalid option was specified. Please check [Job Execution Options](#job-execution-options). |
-| Unable to run job: SIM0021: invalid option value: '*XXX*' | 1 | An invalid value was specified for the option. Please check [Job Execution Options](#job-execution-options). |
-| Unable to run job: job rejected: the requested project "*username*" does not exist. | 1 | ABCI group not specified. Specify the ABCI group using the `-g` option. |
-| Unable to run job: SIM4403: The amount of estimated consumed-point '*NNN*' is over remaining point. Try 'show_point' for point information. | 1 | ABCI points are insufficient. Please refer [Checking ABCI Point](getting-started.md#checking-abci-point) and check ABCI point usage. |
-| Unable to run job: Resource type is not specified. Specify resource type with '-l' option. | 1 | Resource type and quantity not specified. Please check [Job Execution Options](#job-execution-options) |
-| Unable to run job: SIM4702: Specified resource(*XXX*) is over limitation(*NNN*). | 1 | Requested resource exceeds limit. Please check [Number of nodes available at the same time](#number-of-nodes-available-at-the-same-time) and [Elapsed time and node-time product limits](#elapsed-time-and-node-time-product-limits). |
--->
 ### Show the status of batch jobs
 
 To show the current status of batch jobs, use the `qstat` command.
@@ -274,30 +202,25 @@ The major options of the `qstat` command are follows.
 
 | Option | Description |
 |:--|:--|
-| -r | Display resource information about job |
-| -j | Display additional information about job |
+| -f | Display additional information about job |
 
 Example)
 
 ```
 [username@int1 ~]$ qstat
-job-ID     prior   name       user         state submit/start at     queue                          jclass                         slots ja-task-ID
-------------------------------------------------------------------------------------------------------------------------------------------------
-     12345 0.25586 run.sh     username     r     06/27/2018 21:14:49 gpu@g0001                                                        80
+Job id                 Name             User              Time Use S Queue
+---------------------  ---------------- ----------------  -------- - -----
+12345.pbs1              run.sh           username          00:01:23 R rt_HF
 ```
 
 | Field | Description |
 |:--|:--|
-| job-ID | Job ID |
-| prior | Job priority |
-| name | Job name |
-| user | Job owner |
-| state | Job status (r: running, qw: waiting, d: delete, E: error) |
-| submit/start at | Job submission/start time |
-| queue | Queue name |
-| jclass | Job class name |
-| slots | Number of job slot (number of node x 80) |
-| ja-task-ID | Task ID of array job |
+| Job id | Job ID |
+| Name | Job name |
+| User | Job owner |
+| Time Use | CPU usage time of the job |
+| S | Job status (R: running, Q: queued, F: finished, S: suspended, E: exiting) |
+| Queue | Resource type |
 
 ### Delete a batch job
 
@@ -311,20 +234,13 @@ Example) Delete a batch job
 
 ```
 [username@int1 ~]$ qstat
-job-ID     prior   name       user         state submit/start at     queue                          jclass                         slots ja-task-ID
-------------------------------------------------------------------------------------------------------------------------------------------------
-     12345 0.25586 run.sh     username     r     06/27/2018 21:14:49 gpu@g0001                                                        80
-[username@int1 ~]$ qdel 12345
-username has registered the job 12345 for deletion
+Job id                 Name             User              Time Use S Queue
+---------------------  ---------------- ----------------  -------- - -----
+12345.pbs1              run.sh           username          00:01:23 R rt_HF
+[username@int1 ~]$ qdel 12345.pbs1
+[username@int1 ~]$
 ```
 
-Specifying the `-v ALLOW_GROUP_QDEL=1` option when submitting a job enables accounts in the ABCI group specified by the `-p group` option of the qsub command to delete this job.<br>
-Specify the `-p group` option in the qdel command if you want other accounts to delete authorized jobs.
-
-```
-[username@int1 ~]$ qdel 12345
-username has registered the job 12345 for deletion
-```
 
 ### Stdout and Stderr of Batch Jobs
 
@@ -333,123 +249,9 @@ Standard output generated during a job execution is written to a standard output
 job execution to a standard error output file if no standard output and standard err output files are specified at job submission,
 the following files are generated for output.
 
-- *JOB_NAME*.o*JOB_ID*  ---  Standard output file
-- *JOB_NAME*.e*JOB_ID*  ---  Standard error output file
-<!--
-### Report batch job accounting
+- *JOB_NAME*.o*NUM_JOB_ID*  ---  Standard output file
+- *JOB_NAME*.e*NUM_JOB_ID*  ---  Standard error output file
 
-To report batch job accounting, use the `qacct` command.
-
-```
-$ qacct [options]
-```
-
-The major options of the `qacct` command are follows.
-
-| Option | Description |
-|:--|:--|
-| -g *group* | Display accounting information of jobs owend by *group* |
-| -j *job_id* | Display accounting information of *job_id* |
-| -t *n*[*-m*[*:s*]] | Specify task ID of array job. Suboption is *start_number*[-*end_number*[*:step_size*]]. Only available with the -j option. |
-
-Example) Report batch job accounting
-
-```
-[username@int1 ~]$ qacct -j 12345
-==============================================================
-qname        gpu
-hostname     g0001
-group        group 
-owner        username
-project      group 
-department   group
-jobname      run.sh
-jobnumber    12345
-taskid       undefined
-account      username
-priority     0
-cwd          NONE
-submit_host  int1.abci.local
-submit_cmd   /home/system/uge/latest/bin/lx-amd64/qsub -P username -l h_rt=600 -l rt_F=1
-qsub_time    07/01/2018 11:55:14.706
-start_time   07/01/2018 11:55:18.170
-end_time     07/01/2018 11:55:18.190
-granted_pe   perack17
-slots        80
-failed       0
-deleted_by   NONE
-exit_status  0
-ru_wallclock 0.020
-ru_utime     0.010
-ru_stime     0.013
-ru_maxrss    6480
-ru_ixrss     0
-ru_ismrss    0
-ru_idrss     0
-ru_isrss     0
-ru_minflt    1407
-ru_majflt    0
-ru_nswap     0
-ru_inblock   0
-ru_oublock   8
-ru_msgsnd    0
-ru_msgrcv    0
-ru_nsignals  0
-ru_nvcsw     13
-ru_nivcsw    1
-wallclock    3.768
-cpu          0.022
-mem          0.000
-io           0.000
-iow          0.000
-ioops        0
-maxvmem      0.000
-maxrss       0.000
-maxpss       0.000
-arid         undefined
-jc_name      NONE
-```
-
-The major fields of accounting information are follows.
-For more detail, use `man sge_accounting` command.
-
-| Field | Description |
-|:--|:--|
-| jobnunmber   | Job ID |
-| taskid       | Task ID of array job |
-| qsub\_time   | Job submission time |
-| start\_time  | Job start time |
-| end\_time    | Job end time |
-| failed       | Job end code managed by job scheduler |
-| exit\_status | Job end status |
-| wallclock    | Job running time (including pre/post process) |
-
-### Environment Variables
-
-During job execution, the following environment variables are available for the executing job script/binary.
-
-| Variable Name | Description |
-|:--|:--|
-| ENVIRONMENT         | Altair Grid Engine fills in BATCH to identify it as an Altair Grid Engine job submitted with qsub. |
-| JOB\_ID             | Job ID |
-| JOB\_NAME           | Name of the Altair Grid Engine job. |
-| JOB\_SCRIPT         | Name of the script, which is currently executed |
-| NHOSTS              | The number of hosts on which this parallel job is executed |
-| PE\_HOSTFILE        | The absolute path includes hosts, slots and queue name |
-| RESTARTED           | Indicates if the job was restarted (1) or if it is the first run (0) |
-| SGE\_ARDIR          | Path to the local storage assigned to the reserved service |
-| SGE\_BEEONDDIR      | Path to BeeOND storage allocated when BeeOND storage is utilized |
-| SGE\_JOB_HOSTLIST   | The absolute path includes only hosts assigned by Altair Grid Engine |
-| SGE\_LOCALDIR       | The local storage path assigned by Altair Grid Engine |
-| SGE\_O\_WORKDIR     | The working directory path of the job submitter |
-| SGE\_TASK\_ID       | Task number of the array job task the job represents (If is not an array task, the variable contains undefined) |
-| SGE\_TASK\_FIRST    | Task number of the first array job task |
-| SGE\_TASK\_LAST     | Task number of the last array job task |
-| SGE\_TASK\_STEPSIZE | Step size of the array job |
-
-!!! warning
-    Do not change these environment variables in a job because they are reserved by the job scheduler and may affect the job scheduler's behavior.
--->
 ## Advance Reservation (Under Update)
 
 In the case of Reserved service, job execution can be scheduled by reserving compute node in advance.
@@ -465,15 +267,10 @@ The maximum number of nodes and the node-time product that can be reserved for t
 | Minimum reserved nodes per reservation | 1 nodes |
 | Maximum reserved nodes per reservation | 192 nodes |
 | Maximum reserved node time per reservation | 64,512 nodes x hour |
-<!--| Start time of accept reservation | 10:00 a.m. of 30 days ago |
-| Closing time of accept reservation | 9:00 p.m. of Start reservation of the day before |
-| Canceling reservation accept term | 9:00 p.m. of Start reservation of the day before |
-| Reservation start time | 10:00 a.m. of Reservation start day |
-| Reservation end time | 9:30 a.m. of Reservation end day |-->
 
 ### Make a reservation
 
-To make a reservation compute node, use `qrsub` command<!-- or the ABCI User Portal-->.
+To make a reservation compute node, use `qrsub` command.
 When the reservation is completed, a reservation ID will be issued. Please specify this reservation ID when using the reserved node.
 
 !!! warning
@@ -496,7 +293,7 @@ $ qrsub options
 Example) Make a reservation 4 compute nodes from 2024/07/05 to 1 week (7 days)
 
 ```
-[username@int1 ~]$ qrsub -a 20240705 -d 7 -p grpname -n 4 -N "Reserve_for_AI"
+[username@int1 ~]$ qrsub -a 20240705 -d 7 -P grpname -n 4 -N "Reserve_for_AI"
 Your advance reservation 12345 has been granted
 ```
 
@@ -513,7 +310,7 @@ In addition, the issued reservation ID can be used for the ABCI accounts belongi
 
 ### Show the status of reservations
 
-To show the current status of reservations, use the `qrstat` command<!-- or the ABCI User Portal-->.
+To show the current status of reservations, use the `qrstat` command.
 
 Example)
 
@@ -535,7 +332,7 @@ ar-id      name       owner        state start at             end at            
 | duration | Reservation term (hhh:mm:ss) |
 | sr | `false` is always displayed |
 
-If you want to show the number of nodes that can be reserved, <!--you need to access User Portal, or -->use`qrstat` command with `--available` option.
+If you want to show the number of nodes that can be reserved, use`qrstat` command with `--available` option.
 
 Checking the Number of Reservable Nodes for Compute Nodes
 ```
@@ -554,7 +351,7 @@ Checking the Number of Reservable Nodes for Compute Nodes
 !!! warning
     Canceling reservation is permitted to a Responsible Person or User Administrators.
 
-To cancel a reservation, use the `qrdel` command<!-- or the ABCI User Portal-->. When canceling reservation with qrdel command, multiple reservation IDs can be specified as comma separated list. If you specify a reservation ID that does not exist or a reservation ID that you do not have deletion permission for, an error occurs and any reservations are not canceled.
+To cancel a reservation, use the `qrdel` command. When canceling reservation with qrdel command, multiple reservation IDs can be specified as comma separated list. If you specify a reservation ID that does not exist or a reservation ID that you do not have deletion permission for, an error occurs and any reservations are not canceled.
 
 Example) Cancel a reservation
 
@@ -570,13 +367,13 @@ Example) Execute an interactive job on compute node reserved with reservation ID
 
 ```
 [username@int1 ~]$ qrsh -g grpname -ar 12345 -l rt_HF=1 -l h_rt=1:00:00
-[username@g0001 ~]$ 
+[username@hnode001 ~]$ 
 ```
 
 Example) Submit a batch job on compute node reserved with reservation ID `12345`.
 
 ```
-[username@int1 ~]$ qsub -p grpname -ar 12345 run.sh
+[username@int1 ~]$ qsub -P grpname -ar 12345 run.sh
 Your job 12345 ("run.sh") has been submitted
 ```
 
@@ -601,16 +398,16 @@ Advance Reservation does not guarantee the health of the compute node for the du
     - Hardware failures are handled properly. Please refrain from inquiring about unavailability before the day before the reservation starts.  
     - Requests to change the number of reserved compute nodes or to extend the reservation period can not be accepted.
 
-Example) g0001 is available, g0002 is unavailable
+Example) hnode001 is available, hnode002 is unavailable
 ```
-[username@int1 ~]$ qrsub -a 20240705 -d 7 -p grpname -n 2 -N "Reserve_for_AI" 
+[username@int1 ~]$ qrsub -a 20240705 -d 7 -P grpname -n 2 -N "Reserve_for_AI" 
 Your advance reservation 12345 has been granted
 [username@int1 ~]$ qrstat -ar 12345
 (snip)
-message                             reserved queue gpu@g0002 is disabled
-message                             reserved queue gpu@g0002 is unknown
+message                             reserved queue gpu@hnode002 is disabled
+message                             reserved queue gpu@hnode002 is unknown
 granted_parallel_environment        perack01
-granted_slots_list                  gpu@g0001=80,gpu@g0002=80
+granted_slots_list                  gpu@hnode001=80,gpu@hnode002=80
 ```
 
 ## Accounting (Under Update)
@@ -625,7 +422,6 @@ The calculation formula of ABCI point for using On-demand and Spot services is a
 
 > [Service charge coefficient](#job-services)  
 > &times; [Resource type charge coefficient](#available-resource-types)  
-<!--> &times; [POSIX priority charge coefficient](#execution-priority)  -->
 > &times; POSIX priority charge coefficient(1.0 or 1.5)  
 > &times; Number of resource type  
 > &times; max(Elapsed time[sec], Minimum Elapsed time[sec])  

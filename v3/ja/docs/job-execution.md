@@ -58,20 +58,6 @@ ABCIシステムには、次の資源タイプが用意されています。
 | サービス名 | 資源タイプ名 | ノード数 |
 |:--|:--|--:|
 | Reserved  | rt\_HF       | 1-予約ノード数 |
-<!--| Spot      | rt\_F       | 1-512 |
-|           | rt\_G.large | 1 |
-|           | rt\_G.small | 1 |
-|           | rt\_C.large | 1 |
-|           | rt\_C.small | 1 |
-|           | rt\_AF      | 1-64 |
-|           | rt\_AG.small| 1 |-->
-<!--| On-demand | rt\_F       | 1-32 |
-|           | rt\_G.large | 1 |
-|           | rt\_G.small | 1 |
-|           | rt\_C.large | 1 |
-|           | rt\_C.small | 1 |
-|           | rt\_AF      | 1-4 |
-|           | rt\_AG.small| 1 |-->
 
 ### 経過時間およびノード時間積の制限 {#elapsed-time-and-node-time-product-limits}
 
@@ -81,7 +67,6 @@ ABCIシステムには、次の資源タイプが用意されています。
 |:--|:--|:--|
 | Spot      | rt\_HF, rt\_HG, rt\_HC | 168:00:00/1:00:00 |
 | On-demand | rt\_HF, rt\_HG, rt\_HC | 12:00:00/1:00:00 |
-<!--| Reserved  | rt\_HF | 無制限 |-->
 
 また、On-demandおよびSpotサービスで、複数ノードを使用するジョブを実行する場合には、ノード時間積（使用ノード数 &times; 実行時間）に以下の制限があります。
 
@@ -115,24 +100,6 @@ Reservedサービスで予約ノードに投入されたジョブはカウント
 | rt_HF | 736 |
 | rt_HG | 240 |
 | rt_HC | 60 |
-<!--
-### 実行優先度 {#execution-priority}
-
-各ジョブサービスでは、実行時にPOSIX優先度を指定できます。指定可能な優先度の値は以下のとおりです。
-
-| サービス名 | 優先度 | 説明 | POSIX優先度課金係数 |
-|:--|:--|:--|:--|
-| On-demand | -450 | 既定 (変更不可) | 1.0 |
-| Spot      | -500 | 既定 | 1.0 |
-|           | -400 | 優先実行 | 1.5 |
-| Reserved  | -500 | 既定 (変更不可) | NA |
-
-On-demandサービスでは、優先度は`-450`に固定されており変更できません。
-
-Spotサービスでは、`-400`を指定することで他のジョブより優先的に実行できます。ただし、POSIX優先度課金係数に応じた課金が行われます。
-
-Reservedサービスでは、インタラクティブジョブ、バッチジョブのいずれの場合も優先度は`-500`に固定されており変更できません。
--->
 
 ## ジョブ実行オプション {#job-execution-options}
 
@@ -142,57 +109,30 @@ Reservedサービスでは、インタラクティブジョブ、バッチジョ
 
 | オプション | 説明 |
 |:--|:--|
-| -I | インタラクティブジョブを実行します。 |
-| -p *group* | ABCI利用グループを*group*で指定します。自分のABCIアカウントが所属しているABCIグループのみ指定できます。 |
-| -q *resource_type*=*num* | 資源タイプ*resource_type*と、その個数*num*を指定します。 |
+| -P *group* | ABCI利用グループを*group*で指定します。自分のABCIアカウントが所属しているABCIグループのみ指定できます。本オプションは指定必須です。 |
+| -q *resource_type* | 資源タイプ*resource_type*を指定します。本オプションは指定必須です。 |
+| -l select=*num*:ncpus=*num_cpus* | ノード数を*num*で、資源タイプに対応したCPU数を*num_cpus*で指定します。*num_cpus*について、rt_HFは192、rt_HCは32、rt_HGは16を設定します。本オプションは指定必須です。 |
 | -l walltime=[*HH:MM:*]*SS* | 経過時間制限値を指定します。[*HH:MM:*]*SS*で指定することができます。ジョブの実行時間が指定した時間を超過した場合、ジョブは強制終了されます。 |
-| -j oe | 標準出力と標準エラー出力を1つのファイルに結合します。 |
-
-<!--
-この他、拡張オプションとして以下のオプションが使用可能です。
-
-| オプション | 説明 |
-|:--|:--|
-| -l USE\_SSH=*1*<br>-v SSH\_PORT=*port*<br>-v ALLOW\_GROUP\_SSH=*1* | 計算ノードへのSSHログインを有効にする。詳細は[計算ノードへのSSHアクセス](appendix/ssh-access.md)を参照。 |
-| -l USE\_BEEOND=*1*<br>-v BEEOND\_METADATA\_SERVER=*num*<br>-v BEEOND\_STORAGE\_SERVER=*num* | BeeGFS On Demand (BeeOND)を利用するジョブの投入。詳細は[BeeONDストレージ利用](storage.md#beeond-storage)を参照。 |
-| -v GPU\_COMPUTE\_MODE=*mode* | 計算ノードのGPU Compute Modeの変更。詳細は[GPU Compute Modeの変更](gpu.md#changing-gpu-compute-mode)を参照。 |
-| -l docker<br>-l docker\_images | Dockerを利用するジョブの投入。詳細は[Docker](containers.md#docker)を参照。 |
-| -l USE_EXTRA_NETWORK=1 | ジョブに割り当てる計算ノードが最小ホップ構成とならないことを許容する。<br>実行時間が短いジョブで本オプションを指定した場合、計算資源の空き状況によっては未指定時より早くジョブを開始できる場合があるが、通信性能が劣化する可能性がある。 |
-| -v ALLOW\_GROUP\_QDEL=*1* | ジョブ投入時に指定したABCIグループ内の他アカウントがこのジョブを削除することを許可する。 |
--->
+| -N name | ジョブ名を*name*で指定します。デフォルトは、ジョブスクリプト名です。 |
 
 ## インタラクティブジョブ {#interactive-jobs}
 
 インタラクティブジョブを実行するには、`qsub`コマンドに`-I`オプションを付け加えます。
 
 ```
-$ qsub -I -p group -q resource_type=num [options]
+$ qsub -I -P group -q resource_type -l select=num:ncpus=num_cpus [options]
 ```
 
 例) インタラクティブジョブを実行 (On-demandサービス)
 
 ```
-[username@int1 ~]$ qsub -I -p grpname -q rt_HF -l walltime=1:00:00
-[username@g0001 ~]$ 
+[username@int1 ~]$ qsub -I -P grpname -q rt_HF -l select=1:ncpus=192
+[username@hnode001 ~]$ 
 ```
 
 !!! note
     On-demandサービスでは、インタラクティブジョブ実行時にABCIポイントが不足している場合、ジョブの実行に失敗します。
-<!--
-X Window を利用するアプリケーションを実行するには、
-まずインタラクティブノードへのログイン時に、X11転送を有効（`-X`もしくは`-Y`オプションを指定）にします。
 
-```
-[yourpc ~]$ ssh -XC -p 10022 -l username localhost
-```
-
-次にインタラクティブジョブ実行時に、引数に`-pty yes -display $DISPLAY -v TERM /bin/bash`を指定します。
-
-```
-[username@int1 ~]$ qrsh -g grpname -l rt_F=1 -l h_rt=1:00:00 -pty yes -display $DISPLAY -v TERM /bin/bash
-[username@g0001 ~]$ xterm <- Xアプリケーションを起動
-```
--->
 ## バッチジョブ {#batch-jobs}
 
 ABCIシステムでバッチジョブを実行する場合、実行するプログラムとは別にジョブスクリプトを作成します。
@@ -200,11 +140,12 @@ ABCIシステムでバッチジョブを実行する場合、実行するプロ�
 実行するコマンド列を記載します。
 
 ```bash
-#!/bin/bash
-
-#PBS -q rt_HG
+#!/bin/sh
+#PBS -q rt_HF
+#PBS -l select=1:ncpus=192
 #PBS -l walltime=1:23:45
-#PBS  -j oe
+#PBS -P grpname
+
 cd ${PBS_O_WORKDIR}
 
 [Environment Modules の初期化]
@@ -215,36 +156,34 @@ cd ${PBS_O_WORKDIR}
 例) CUDAを利用したプログラムを実行するジョブスクリプト例
 
 ```bash
-#!/bin/bash
-
-#PBS -q rt_HG
+#!/bin/sh
+#PBS -q rt_HF
+#PBS -l select=1:ncpus=192
 #PBS -l walltime=1:23:45
-#PBS  -j oe
+#PBS -P grpname
+
 cd ${PBS_O_WORKDIR}
 
 source /etc/profile.d/modules.sh
-module load cuda/10.2/10.2.89
+module load cuda/12.6/12.6.1
 ./a.out
 ```
 
 ### バッチジョブの投入 {#submit-a-batch-job}
 
-バッチジョブを実行するには、`qsub`コマンドを使用します。
+バッチジョブを実行するには、`qsub`コマンドを使用します。実行後はジョブIDが出力されます。
 
 ```
-$ qsub -p group [options] script_name
+$ qsub script_name
 ```
 
 例) ジョブスクリプトrun.shをバッチジョブとして投入 (Spotサービス)
 
 ```
-[username@int1 ~]$ qsub -p grpname run.sh
-Your job 12345 ("run.sh") has been submitted
+[username@int1 ~]$ qsub run.sh
+1234.pbs1
 ```
-<!--
-!!! warning
-    `-g`オプションは、ジョブスクリプト内には指定できません。
--->
+
 !!! note
     Spotサービスでは、バッチジョブ投入時にABCIポイントが不足している場合、バッチジョブの投入に失敗します。
 
@@ -252,19 +191,7 @@ Your job 12345 ("run.sh") has been submitted
 
 バッチジョブの投入に成功した場合、`qsub`コマンドの終了ステータスは`0`となります。
 失敗した場合は0以外の値となり、エラーメッセージが出力されます。
-<!--
-以下はエラーメッセージの一部です。
-こちらにないエラーについて確認したい場合は、ABCIサポートまで[お問い合わせ](./contact.md)ください。
 
-| エラーメッセージ | 終了ステータス | 説明 |
-|:--|:--|:--|
-| qsub: ERROR: error: ERROR! invalid option argument "*XXX*" | 255 | オプション指定に誤りがあります。[ジョブ実行オプション](#job-execution-options)を確認してください。 |
-| Unable to run job: SIM0021: invalid option value: '*XXX*' | 1 | オプションに指定した値に誤りがあります。[ジョブ実行オプション](#job-execution-options)を確認してください。 |
-| Unable to run job: job rejected: the requested project "*username*" does not exist. | 1 | ABCIグループが指定されていません。`-g`オプションでABCIグループを指定してください。 |
-| Unable to run job: SIM4403: The amount of estimated consumed-point '*NNN*' is over remaining point. Try 'show_point' for point information. | 1 | ABCIポイントが不足しています。[ABCIポイントの確認](getting-started.md#checking-abci-point)を参照の上、ABCIポイントの使用状況を確認してください。 |
-| Unable to run job: Resource type is not specified. Specify resource type with '-l' option. | 1 | 資源タイプと個数が指定されていません。[ジョブ実行オプション](#job-execution-options)を確認してください。 |
-| Unable to run job: SIM4702: Specified resource(*XXX*) is over limitation(*NNN*). | 1 | 要求したリソースが制限を超過しています。制限値については[同時に利用可能なノード数](#number-of-nodes-available-at-the-same-time)、[経過時間およびノード時間積の制限](#elapsed-time-and-node-time-product-limits)を確認してください。 |
--->
 ### バッチジョブの状態の確認 {#show-the-status-of-batch-jobs}
 
 バッチジョブを状態を確認するには、`qstat`コマンドを利用します。
@@ -277,30 +204,26 @@ $ qstat [options]
 
 | オプション | 説明 |
 |:--|:--|
-| -r | ジョブのリソース情報を表示します。 |
-| -j | ジョブに関する追加情報を表示します。 |
+| -f | ジョブに関する追加情報を表示します。 |
 
 例)
 
 ```
 [username@int1 ~]$ qstat
-job-ID     prior   name       user         state submit/start at     queue                          jclass                         slots ja-task-ID
-------------------------------------------------------------------------------------------------------------------------------------------------
-     12345 0.25586 run.sh     username     r     06/27/2018 21:14:49 gpu@g0001                                                        80
+Job id                 Name             User              Time Use S Queue
+---------------------  ---------------- ----------------  -------- - -----
+12345.pbs1              run.sh           username          00:01:23 R rt_HF
 ```
 
 | 項目 | 説明 |
 |:--|:--|
-| job-ID | ジョブID |
-| prior | ジョブ優先度 |
-| name | ジョブ名 |
-| user | ジョブのオーナー |
-| state | ジョブ状態 (r: 実行中、qw: 待機中、d: 削除中、E: エラー状態) |
-| submit/start at | ジョブ投入/開始時刻 |
-| queue | キュー名 |
-| jclass | ジョブクラス名 |
-| slots | ジョブスロット数 (ノード数 x 80) |
-| ja-task-ID | アレイジョブのタスクID |
+| Job id | ジョブID |
+| Name | ジョブ名 |
+| User | ジョブのオーナー |
+| Time Use | ジョブのCPU利用時間 |
+| S | ジョブ状態 (R: 実行中, Q: 待機中, F: 完了, S: 一時停止, E: 終了中) |
+| Queue | 資源タイプ |
+
 
 ### バッチジョブの削除 {#delete-a-batch-job}
 
@@ -314,20 +237,13 @@ $ qdel job_id
 
 ```
 [username@int1 ~]$ qstat
-job-ID     prior   name       user         state submit/start at     queue                          jclass                         slots ja-task-ID
-------------------------------------------------------------------------------------------------------------------------------------------------
-     12345 0.25586 run.sh     username     r     06/27/2018 21:14:49 gpu@g0001                                                        80
-[username@int1 ~]$ qdel 12345
-username has registered the job 12345 for deletion
+Job id                 Name             User              Time Use S Queue
+---------------------  ---------------- ----------------  -------- - -----
+12345.pbs1              run.sh           username          00:01:23 R rt_HF
+[username@int1 ~]$ qdel 12345.pbs1
+[username@int1 ~]$
 ```
 
-ジョブ投入時に`-v ALLOW_GROUP_QDEL=1`オプションを指定すると、qsubコマンドの`-p group`オプションで指定したABCIグループのアカウントがこのジョブを削除できるようになります。<br>
-許可されたジョブを他のアカウントが削除する場合、qdelコマンドに`-p group`オプションを指定します。
-
-```
-[username@int1 ~]$ qdel 12345
-username has registered the job 12345 for deletion
-```
 
 ### バッチジョブの標準出力と標準エラー出力 {#stdout-and-stderr-of-batch-jobs}
 
@@ -336,128 +252,14 @@ username has registered the job 12345 for deletion
 標準出力ファイルにはジョブ実行中の標準出力、標準エラー出力ファイルにはジョブ実行中のエラーメッセージが出力されます。
 ジョブ投入時に、標準出力ファイル、標準エラー出力ファイルを指定しなかった場合は、以下のファイルに出力されます。
 
-- *JOB_NAME*.o*JOB_ID*  ---  標準出力ファイル
-- *JOB_NAME*.e*JOB_ID*  ---  標準エラー出力ファイル
+- *JOB_NAME*.o*NUM_JOB_ID*  ---  標準出力ファイル
+- *JOB_NAME*.e*NUM_JOB_ID*  ---  標準エラー出力ファイル
 
-例）ジョブ名がrun.sh、ジョブIDが`12345`の場合
+例）ジョブ名がrun.sh、ジョブIDが`12345.pbs1`の場合
 
 - 標準出力ファイル名：run.sh.o12345
 - 標準エラー出力ファイル名：run.sh.e12345
-<!--
-### バッチジョブの統計情報出力 {#report-batch-job-accounting}
 
-バッチジョブの統計情報を出力するには、`qacct`コマンドを利用します。
-
-```
-$ qacct [options]
-```
-
-`qacct`コマンドの主要なオプションを以下に示します。
-
-| オプション | 説明 |
-|:--|:--|
-| -g *group* | *group*のジョブに関する情報を表示します。 |
-| -j *job_id* | *job_id*のジョブに関する情報を表示します。 |
-| -t *n*[*-m*[*:s*]] | アレイジョブのタスクIDを*n*[*-m*[*:s*]]で指定します。指定されたタスクIDにマッチするジョブの情報のみ表示されます。本オプションは-jオプションを指定した場合のみ使用可能です。 |
-
-例) バッチジョブの統計情報を参照
-
-```
-[username@int1 ~]$ qacct -j 12345
-==============================================================
-qname        gpu
-hostname     g0001
-group        group 
-owner        username
-project      group 
-department   group
-jobname      run.sh
-jobnumber    12345
-taskid       undefined
-account      username
-priority     0
-cwd          NONE
-submit_host  int1.abci.local
-submit_cmd   /home/system/uge/latest/bin/lx-amd64/qsub -P username -l h_rt=600 -l rt_F=1
-qsub_time    07/01/2018 11:55:14.706
-start_time   07/01/2018 11:55:18.170
-end_time     07/01/2018 11:55:18.190
-granted_pe   perack17
-slots        80
-failed       0
-deleted_by   NONE
-exit_status  0
-ru_wallclock 0.020
-ru_utime     0.010
-ru_stime     0.013
-ru_maxrss    6480
-ru_ixrss     0
-ru_ismrss    0
-ru_idrss     0
-ru_isrss     0
-ru_minflt    1407
-ru_majflt    0
-ru_nswap     0
-ru_inblock   0
-ru_oublock   8
-ru_msgsnd    0
-ru_msgrcv    0
-ru_nsignals  0
-ru_nvcsw     13
-ru_nivcsw    1
-wallclock    3.768
-cpu          0.022
-mem          0.000
-io           0.000
-iow          0.000
-ioops        0
-maxvmem      0.000
-maxrss       0.000
-maxpss       0.000
-arid         undefined
-jc_name      NONE
-```
-
-主な表示項目は以下の通りです。
-その他項目の詳細は`man sge_accounting`を参照ください。
-
-| 項目 | 説明 |
-|:--|:--|
-| jobnunmber   | ジョブID |
-| taskid       | アレイジョブのタスクID |
-| qsub\_time   | ジョブの実行投入時刻 |
-| start\_time  | ジョブの実行開始時刻 |
-| end\_time    | ジョブの実行終了時刻 |
-| failed       | ジョブスケジューラのジョブ終了コード |
-| exit\_status | ジョブの終了ステータス |
-| wallclock    | ジョブの実行時間(前後処理を含む) |
-
-### 環境変数 {#environment-variables}
-
-ジョブ実行中に、ジョブスクリプトもしくはコマンドラインで利用できる環境変数は以下の通りです。
-
-| 環境変数 | 説明 |
-|:--|:--|
-| ENVIRONMENT | ジョブの場合、"BATCH"が割り当てられる |
-| JOB\_ID | ジョブID |
-| JOB\_NAME | ジョブ名 |
-| JOB\_SCRIPT | ジョブスクリプト名 |
-| NHOSTS | ジョブに割り当てられたホスト数 |
-| PE\_HOSTFILE | ジョブに割り当てられたホスト、スロット、キュー名が記載されたファイルへのパス |
-| RESTARTED | ジョブが再実行された場合は1、それ以外は0 |
-| SGE\_ARDIR | Reservedサービスに割り当てられたローカルストレージへのパス |
-| SGE\_BEEONDDIR | BeeONDストレージ利用時に割り当てられたBeeONDストレージへのパス |
-| SGE\_JOB\_HOSTLIST | ジョブに割り当てられたホストが記載されたファイルへのパス |
-| SGE\_LOCALDIR | ジョブに割り当てられたローカルストレージへのパス |
-| SGE\_O\_WORKDIR | ジョブ投入時の作業ディレクトリへのパス |
-| SGE\_TASK\_ID | アレイジョブのタスクID(アレイジョブでない場合は"undefined") |
-| SGE\_TASK\_FIRST | アレイジョブの最初のタスクID |
-| SGE\_TASK\_LAST | アレイジョブの最後のタスクID |
-| SGE\_TASK\_STEPSIZE | アレイジョブのステップサイズ |
-
-!!! warning
-    上記の環境変数については、ジョブスケジューラで予約された変数であり、ジョブスケジューラの動作に影響を与える可能性があるためジョブの中で変更しないようにしてください。
--->
 ## 事前予約（更新中） {#advance-reservation}
 
 Reservedサービスでは、計算ノードを事前に予約して計画的なジョブ実行が可能となります。
@@ -473,15 +275,10 @@ Reservedサービスでは、計算ノードを事前に予約して計画的な
 | 1予約あたりの最小予約ノード数 | 1ノード |
 | 1予約あたりの最大予約ノード数 | 192ノード |
 | 1予約あたりの最大予約ノード時間積 | 64,512ノード時間積 |
-<!--| 予約受付開始時刻 | 30日前の午前10時 |
-| 予約受付締切時刻 | 予約開始前日の午後9時 |
-| 予約取消受付期間 | 予約開始前日の午後9時 |
-| 予約開始時刻 | 予約開始日の午前10時 |
-| 予約終了時刻 | 予約終了日の午前9時30分 |-->
 
 ### 予約の実行 {#make-a-reservation}
 
-計算ノードを予約するには、<!--[ABCI利用者ポータル](https://portal.abci.ai/user/)もしくは-->`qrsub`コマンドを使用します。
+計算ノードを予約するには、`qrsub`コマンドを使用します。
 予約が完了すると、予約IDが発行されますので、予約した計算ノードを使用する際にこの予約IDを指定してください。
 
 !!! warning
@@ -504,7 +301,7 @@ $ qrsub options
 例) 2024年7月5日から1週間 (7日間) 計算ノード4台を予約
 
 ```
-[username@int1 ~]$ qrsub -a 20240705 -d 7 -p grpname -n 4 -N "Reserve_for_AI"
+[username@int1 ~]$ qrsub -a 20240705 -d 7 -P grpname -n 4 -N "Reserve_for_AI"
 Your advance reservation 12345 has been granted
 ```
 
@@ -521,7 +318,7 @@ Your advance reservation 12345 has been granted
 
 ### 予約状態の確認 {#show-the-status-of-reservations}
 
-予約状態を確認するには、<!--[ABCI利用者ポータル](https://portal.abci.ai/user/)もしくは-->`qrstat`コマンドを使用します。
+予約状態を確認するには、`qrstat`コマンドを使用します。
 
 例)
 
@@ -543,7 +340,7 @@ ar-id      name       owner        state start at             end at            
 | duration | 予約期間 (hhh:mm:ss) |
 | sr | 常にfalseと表示 |
 
-システムあたりの予約可能ノード数を確認するには、<!--[ABCI利用者ポータル](https://portal.abci.ai/user/)もしくは-->`qrstat`コマンドの`--available`オプションを使用します。
+システムあたりの予約可能ノード数を確認するには、`qrstat`コマンドの`--available`オプションを使用します。
 
 計算ノードの予約可能ノード数の確認
 ```
@@ -562,7 +359,7 @@ ar-id      name       owner        state start at             end at            
 !!! warning
     予約の取り消しは利用責任者もしくは利用管理者のみが実施できます。
 
-予約を取り消すには、<!--[ABCI利用者ポータル](https://portal.abci.ai/user/)もしくは-->`qrdel`コマンドを使用します。`qrdel`コマンドでの予約取り消しは、「,(カンマ)」区切りのリストとして複数指定できます。指定したar_idの中に1つでも存在しない予約ID、もしくは削除権限のない予約IDが指定されている場合は、エラーとなり削除は実行されません。
+予約を取り消すには、`qrdel`コマンドを使用します。`qrdel`コマンドでの予約取り消しは、「,(カンマ)」区切りのリストとして複数指定できます。指定したar_idの中に1つでも存在しない予約ID、もしくは削除権限のない予約IDが指定されている場合は、エラーとなり削除は実行されません。
 
 例) 予約を取り消し
 
@@ -578,13 +375,13 @@ ar-id      name       owner        state start at             end at            
 
 ```
 [username@int1 ~]$ qrsh -g grpname -ar 12345 -l rt_HF=1 -l h_rt=1:00:00
-[username@g0001 ~]$ 
+[username@hnode001 ~]$ 
 ```
 
 例) ジョブスクリプトrun.shを予約ID`12345`で予約された計算ノードにバッチジョブとして投入
 
 ```
-[username@int1 ~]$ qsub -p grpname -ar 12345 run.sh
+[username@int1 ~]$ qsub -P grpname -ar 12345 run.sh
 Your job 12345 ("run.sh") has been submitted
 ```
 
@@ -609,16 +406,16 @@ Your job 12345 ("run.sh") has been submitted
     - ハードウェア障害は適宜対応しております。予約開始前日より前の利用不可に対するお問い合わせはご遠慮願います。
     - 予約している計算ノード数変更や予約期間の延長の依頼は対応不可になります。
 
-例) g0001は利用可能、g0002は利用不可
+例) hnode001は利用可能、hnode002は利用不可
 ```
-[username@int1 ~]$ qrsub -a 20240705 -d 7 -p grpname -n 2 -N "Reserve_for_AI" 
+[username@int1 ~]$ qrsub -a 20240705 -d 7 -P grpname -n 2 -N "Reserve_for_AI" 
 Your advance reservation 12345 has been granted
 [username@int1 ~]$ qrstat -ar 12345
 (snip)
-message                             reserved queue gpu@g0002 is disabled
-message                             reserved queue gpu@g0002 is unknown
+message                             reserved queue gpu@hnode002 is disabled
+message                             reserved queue gpu@hnode002 is unknown
 granted_parallel_environment        perack01
-granted_slots_list                  gpu@g0001=80,gpu@g0002=80
+granted_slots_list                  gpu@hnode001=80,gpu@hnode002=80
 ```
 
 ## 課金（更新中） {#accounting}
