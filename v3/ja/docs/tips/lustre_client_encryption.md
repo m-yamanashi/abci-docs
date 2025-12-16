@@ -52,7 +52,7 @@ cat: /groups/grpname/dir01/hello.tx: Required key not available
 ```
 
 以下の手順では暗号化ディレクトリをアンロックしています。これにより、ディレクトリへ保存されたデータを確認できます。
-fscrypt の暗号・復号化は、鍵をノードのカーネルに保持することで行われます。そのため、別のノードから暗号化ディレクトリにアクセスする場合は、事前に以下のアンロック処理が必要となります。
+fscrypt の暗号・復号化は、鍵をノードのカーネルに保持することで行われます。そのため、別のノードから暗号化ディレクトリに新しくアクセスする場合は、事前に以下のアンロック処理が必要となります。
 ```
 [username@hnode001 ~]$ cat /groups/grpname/dir01/hello.tx
 cat: /groups/grpname/dir01/hello.tx: Required key not available
