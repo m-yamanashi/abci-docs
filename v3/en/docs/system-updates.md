@@ -4,6 +4,22 @@
 
 Updated the explanation on obtaining [Initial password](open-ondemand/index.md#initial-password) for Open OnDemand.
 
+## 2026-02-18 {#2026-02-18}
+
+The version of Open OnDemand has been updated to 4.0.8.
+
+| Add / Update / Delete | Software | Version | Previous version |
+|:--|:--|:--|:--|
+| Update | Open OnDemand                           | 4.0.8         | 3.1.10         |
+
+## 2026-02-17 {#2026-02-17}
+
+We installed the following software.
+
+| Add / Update / Delete | Software | Version | Previous version |
+|:--|:--|:--|:--|
+| Add | cudnn | 9.18.1 (for CUDA 12, 13) | |
+
 ## 2026-02-10 {#2026-02-10}
 
 We installed the following software.

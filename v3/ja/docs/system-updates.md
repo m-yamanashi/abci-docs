@@ -4,6 +4,22 @@
 
 Open OnDemand で使用する[初期パスワード](open-ondemand/index.md#initial-password)発行方法の説明を更新しました。
 
+## 2026-02-18 {#2026-02-18}
+
+Open OnDemandのバージョンを4.0.8にアップデートしました。
+
+| Add / Update / Delete | Software | Version | Previous version |
+|:--|:--|:--|:--|
+| Update | Open OnDemand                           | 4.0.8         | 3.1.10         |
+
+## 2026-02-17 {#2026-02-17}
+
+以下のソフトウェアをインストールしました。
+
+| Add / Update / Delete | Software | Version | Previous version |
+|:--|:--|:--|:--|
+| Add | cudnn | 9.18.1 (CUDA 12, 13対応版) | |
+
 ## 2026-02-10 {#2026-02-10}
 
 以下のソフトウェアをインストールしました。
