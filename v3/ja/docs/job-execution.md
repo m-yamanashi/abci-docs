@@ -441,7 +441,7 @@ $ nodestatus
 例) コマンド出力結果
 ```
 [username01@login1 ~]$ nodestatus
-Node status                          Number of unit
+Node status                          Number of nodes
 ---------------------------------------------------
 Vacant Nodes                         : 0
 Partially Occupied Nodes             : 2

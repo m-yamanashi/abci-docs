@@ -433,7 +433,7 @@ $ nodestatus
 Example) Command output results
 ```
 [username01@login1 ~]$ nodestatus
-Node status                          Number of unit
+Node status                          Number of nodes
 ---------------------------------------------------
 Vacant Nodes                         : 0
 Partially Occupied Nodes             : 2
