@@ -3,7 +3,7 @@
 ## 概要 {#overview}
 
 [Open OnDemand (OOD)](https://openondemand.org/)はWebブラウザからABCIを使用するためのポータルサイトです。
-
+ABCIではOpen OnDemandのバージョン4.0.8を導入しています。
 以下の機能がWebブラウザ上で利用できるようになり、より簡単にABCIを使えるようになります。
 
 - インタラクティブノードでのコンソール操作
@@ -14,14 +14,13 @@
 ## 初期パスワードの発行 {#initial-password}
 
 Open OnDemandに初めてログインする場合、Open OnDemand用の初期パスワードが必要です。
-初期パスワードの発行は、[お問い合わせ](../contact.md)ページを参照のうえ、<abci3-qa@abci.ai> までご依頼ください。
+初期パスワードの発行は[利用者ポータル](https://portal.v3.abci.ai/)から行うことができます。
 
-初期パスワードの変更については[初期パスワード変更方法](#how-to-change-the-initial-password)を参照してください。
-
+初期パスワード発行の詳細については[ABCI 3.0 Portal Guide](https://docs.abci.ai/v3/portal/ja/02/#210-ood)を参照してください。
 
 ## 初期パスワード変更方法 {#how-to-change-the-initial-password}
 
-初期パスワードを変更するにはインタラクティブノードで、`passwd`コマンドを実行します。
+初期パスワードを変更するには、インタラクティブノードで`passwd`コマンドを実行します。
 
 ```
 [username@login1 ~]$ passwd
