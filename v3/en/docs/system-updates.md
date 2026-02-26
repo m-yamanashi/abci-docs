@@ -1,6 +1,6 @@
 # System Updates
 
-## 2026-02-13 {#2026-02-13}
+## 2026-02-27 {#2026-02-27}
 
 We installed the `nodestatus` command. This allows you to check the availability status of compute nodes (number of available nodes).
 
