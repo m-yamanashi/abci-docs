@@ -1,5 +1,10 @@
 # System Updates
 
+
+## 2026-02-27 {#2026-02-27}
+
+We installed the `nodestatus` command. This allows you to check the availability status of compute nodes (number of available nodes).
+
 ## 2026-02-25 {#2026-02-25}
 
 Updated the explanation on obtaining [Initial password](open-ondemand/index.md#initial-password) for Open OnDemand.
@@ -19,6 +24,7 @@ We installed the following software.
 | Add / Update / Delete | Software | Version | Previous version |
 |:--|:--|:--|:--|
 | Add | cudnn | 9.18.1 (for CUDA 12, 13) | |
+
 
 ## 2026-02-10 {#2026-02-10}
 
