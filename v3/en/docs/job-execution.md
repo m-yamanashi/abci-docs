@@ -106,6 +106,23 @@ Jobs submitted to reserved nodes in the Reserved service are not included in the
 | rt_HG | 64 |
 | rt_HC | 16 |
 
+### Execution Priority {#execution-priority}
+
+Each job service allows you to specify a priority when running a job, as follows:
+
+| Service | Description | Priority | Service charge coefficient |
+|:--|:--|:--|:--|
+| On-demand | 1 | default (unchangable) | 1.0 |
+| Spot      | 0 | default               | 1.0 |
+|           | 1 | high priority         | 1.5 |
+| Reserved  | 0 | default (unchangable) | 1.5 |
+
+In On-demand service, the priority is fixed at `1` and cannot be changed.
+
+In Spot service, you can specify `1` to your job, so as to execute it in higher priority to other jobs. However, you will be charged according to the Service charge coefficient.
+
+In Reserved service, the priority is fixed at `0` and cannot be changed for both interactive and batch jobs.
+
 ## Job Execution Options
 
 Use `qsub` command to run interactive jobs and batch jobs.
@@ -120,6 +137,7 @@ The major options of the `qsub` command are follows.
 | -l walltime=[*HH:MM:*]*SS* | Specify elapsed time by [*HH:MM:*]*SS*. When execution time of job exceed specified time, job is rejected. |
 | -N name | Specify the job name with *name*. The default is the job script name. |
 | -o *stdout_name* | Specify standard output stream of job. The output file will be created after the job completes. |
+| -p *priority* | Specify POSIX priority for Spot service |
 | -e *stderr_name* | Specify standard error stream of job. The output file will be created after the job completes. |
 | -k oe | During execution, the standard output and standard error output are streamed to *JOB_NAME*.o*NUM_JOB_ID*. However, if this option is used, the standard output and standard error output will not be directed to the files specified by -o or -e. |
 | -j oe | Specify standard error stream is merged into standard output stream |
@@ -404,6 +422,36 @@ Additionally, the output file will be created after the job completes.
 - *JOB_NAME*.o*NUM_JOB_ID*  ---  Standard output file
 - *JOB_NAME*.e*NUM_JOB_ID*  ---  Standard error output file
 
+## Check the usage status of compute nodes
+To check the usage status of compute nodes (number of available nodes), use the `nodestatus` command.
+There are no options; only the `nodestatus` command can be executed.
+
+```
+$ nodestatus
+```
+
+Example) Command output results
+```
+[username01@login1 ~]$ nodestatus
+Node status                          Number of nodes
+---------------------------------------------------
+Vacant Nodes                         : 0
+Partially Occupied Nodes             : 2
+Fully Occupied or Unavailable Nodes  : 764
+---------------------------------------------------
+Data Timestamp : 2026-02-05 17:30:01
+```
+
+The command output items are as follows.
+
+| Item | Description |
+| -- | -- |
+| Vacant Nodes | Number of available compute nodes |
+| Partially Occupied Nodes | Number of compute nodes partially available in rt_HC and rt_HG used for node sharing |
+| Fully Occupied or Unavailable Nodes | Number of compute nodes currently unavailable for job submission due to being in use or unavailable |
+
+The data displayed in the `nodestatus` is based on data acquired every 15 minutes.
+It does not reflect real-time status.
 
 ## Environment Variables
 
@@ -422,7 +470,7 @@ During job execution, the following environment variables are available for the 
 !!! warning
     Do not change these environment variables in a job because they are reserved by the job scheduler and may affect the job scheduler's behavior.
 
-## Advance Reservation
+## Advance Reservation {#advance-reservation}
 
 In the case of Reserved service, job execution can be scheduled by reserving compute node in advance.
 
@@ -437,6 +485,11 @@ The maximum number of nodes and the node-time product that can be reserved for t
 | Minimum reserved nodes per reservation | 1 node |
 | Maximum reserved nodes per reservation | 32 nodes |
 | Maximum reserved node time per reservation | 5,376 nodes x hours |
+| Start time of accept reservation | 10:00 a.m. 30 days before |
+| Close time of accept reservation | 9:00 p.m. on the day before Start reservation day |
+| Canceling reservation accept term | 9:00 p.m. on the day before Start reservation day |
+| Reservation start time | 10:00 a.m. of Reservation start day |
+| Reservation end time | 9:30 a.m. of Reservation end day |
 
 !!! note
     The numbers of nodes were changed to the temporal values at Oct 28, 2025. Refer to [System Updates 2025-10-28](https://docs.abci.ai/v3/ja/system-updates/#2025-10-28) for the normal values.

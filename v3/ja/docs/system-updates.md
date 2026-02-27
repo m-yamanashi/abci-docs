@@ -1,5 +1,38 @@
 # システム更新履歴
 
+
+## 2026-02-27 {#2026-02-27}
+
+コマンド`nodestatus`を提供しました。これにより計算ノードの空き状況(利用可能ノード数)について確認可能となります。
+
+## 2026-02-25 {#2026-02-25}
+
+Open OnDemand で使用する[初期パスワード](open-ondemand/index.md#initial-password)発行方法の説明を更新しました。
+
+## 2026-02-18 {#2026-02-18}
+
+Open OnDemandのバージョンを4.0.8にアップデートしました。
+
+| Add / Update / Delete | Software | Version | Previous version |
+|:--|:--|:--|:--|
+| Update | Open OnDemand                           | 4.0.8         | 3.1.10         |
+
+## 2026-02-17 {#2026-02-17}
+
+以下のソフトウェアをインストールしました。
+
+| Add / Update / Delete | Software | Version | Previous version |
+|:--|:--|:--|:--|
+| Add | cudnn | 9.18.1 (CUDA 12, 13対応版) | |
+
+## 2026-02-10 {#2026-02-10}
+
+以下のソフトウェアをインストールしました。
+
+| Add / Update / Delete | Software | Version | Previous version |
+|:--|:--|:--|:--|
+| Add | singularity-ce | 4.3.6 | |
+
 ## 2026-01-20 {#2026-01-20}
 
 資源タイプ`rt_HG`、`rt_HC`における[システムあたりの同時実行ジョブ数の制限値](job-execution.md#limitation-on-the-number-of-job-submissions-and-executions)を以下のとおり変更しました。

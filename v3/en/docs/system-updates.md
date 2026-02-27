@@ -1,5 +1,39 @@
 # System Updates
 
+
+## 2026-02-27 {#2026-02-27}
+
+We installed the `nodestatus` command. This allows you to check the availability status of compute nodes (number of available nodes).
+
+## 2026-02-25 {#2026-02-25}
+
+Updated the explanation on obtaining [Initial password](open-ondemand/index.md#initial-password) for Open OnDemand.
+
+## 2026-02-18 {#2026-02-18}
+
+The version of Open OnDemand has been updated to 4.0.8.
+
+| Add / Update / Delete | Software | Version | Previous version |
+|:--|:--|:--|:--|
+| Update | Open OnDemand                           | 4.0.8         | 3.1.10         |
+
+## 2026-02-17 {#2026-02-17}
+
+We installed the following software.
+
+| Add / Update / Delete | Software | Version | Previous version |
+|:--|:--|:--|:--|
+| Add | cudnn | 9.18.1 (for CUDA 12, 13) | |
+
+
+## 2026-02-10 {#2026-02-10}
+
+We installed the following software.
+
+| Add / Update / Delete | Software | Version | Previous version |
+|:--|:--|:--|:--|
+| Add | SingularityCE | 4.3.6 | |
+
 ## 2026-01-20 {#2026-01-20}
 
 We changed [the limits on the number of running jobs at the same time per system for each resource type](job-execution.md#limitation-on-the-number-of-job-submissions-and-executions) as follows.
