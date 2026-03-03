@@ -23,8 +23,6 @@ Organization:
 Registered email address:
 ```
 
-To discuss communication permission, please [contact ABCI Support](../contact.md). 
-
 Please provide the following information, as it is necessary for us to review your application. 
 
 * Destination server information, IP address/hostname, role, and administrator (or legal entity that manages the server). 
