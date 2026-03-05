@@ -13,7 +13,7 @@ Communications between ABCI and external services/servers are restricted. The pe
 
 For the outbound (Compute nodes -> external) communications which are not permitted above, we will accept an application for permission by email. If the application is examined and approved, we will permit the communication until the end of the fiscal year. However, depending on the outcome of the review, we may not be able to meet your request.
 
-Before submitting the application, please contact us at abci3-qa@abci.ai with the following information.
+Before submitting the application, please contact us by email. When contacting us or submitting application, send email to abci3-qa@abci.ai with the following information.
 
 ```
 Full Name:
