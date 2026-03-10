@@ -2,8 +2,6 @@ site_name: ABCI 3.0 Portal Guide
 site_description: ABCI 3.0 Portal Guide, Japanese version
 site_author: AIST
 site_url: https://docs.abci.ai/portal/ja/
-repo_url: https://github.com/aistairc/abci-docs
-edit_uri: edit/master/portal/ja/docs/
 copyright: 'Copyright &copy; 2021 National Institute of Advanced Industrial Science and Technology (AIST)'
 nav:
   - 'はじめに': 'index.md'
