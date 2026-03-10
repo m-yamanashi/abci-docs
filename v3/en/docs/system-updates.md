@@ -1,6 +1,12 @@
 # System Updates
 
 
+## 2026-03-11 {#2026-03-11}
+
+Starting at the end of fiscal year 2025, an expiration date will be set for communication permission. For fiscal year 2025 and thereafter, communication permission will be expired at the end of each fiscal year. From fiscal year 2026, please apply for communication permission every year.
+
+For details of the procedure for applying communication permission, refer to [Request for Communication with External Networks](../requests/external-networks/) in "Various Requests" section.
+
 ## 2026-02-27 {#2026-02-27}
 
 We installed the `nodestatus` command. This allows you to check the availability status of compute nodes (number of available nodes).
