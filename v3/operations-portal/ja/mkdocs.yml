@@ -2,8 +2,6 @@ site_name: ABCI 3.0 Management Portal
 site_description: ABCI 3.0 Management Portal, Japanese version
 site_author: AIST
 site_url: 
-repo_url: https://github.com/aistairc/abci-docs
-edit_uri: edit/master/portal/ja/docs/
 copyright: 'Copyright &copy; 2021 National Institute of Advanced Industrial Science and Technology (AIST)'
 nav:
   - 'はじめに': 'index.md'
@@ -25,8 +23,13 @@ nav:
   - '16. レポートの作成方法': '16.md'
   - '17. ログイン状況の確認方法': '17.md'
   - '18. グループディスク追加/削減申請': '20.md'
-  - '19. クラウドストレージ追加/削減申請': '21.md'
-  - '改訂履歴': '22.md'
+  - '19. クラウドストレージ容量追加/削減申請': '21.md'
+  - '20. ABCIポイント返却': '22.md'
+  - '21. 最大ノード数メンテナンス機能': '23.md'
+  - '22. 利用テーマ・利用概要変更申請': '24.md'
+  - '23. 請求書送付先・予算コード変更申請': '25.md'
+  - '24. クラウドストレージアカウントディレクトリの無効化': '26.md'
+  - '改訂履歴': '27.md'
 theme:
   name: 'material'
   favicon: 'img/favicon.png'

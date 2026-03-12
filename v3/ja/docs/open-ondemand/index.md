@@ -3,7 +3,7 @@
 ## 概要 {#overview}
 
 [Open OnDemand (OOD)](https://openondemand.org/)はWebブラウザからABCIを使用するためのポータルサイトです。
-
+ABCIではOpen OnDemandのバージョン4.0.8を導入しています。
 以下の機能がWebブラウザ上で利用できるようになり、より簡単にABCIを使えるようになります。
 
 - インタラクティブノードでのコンソール操作
@@ -14,14 +14,13 @@
 ## 初期パスワードの発行 {#initial-password}
 
 Open OnDemandに初めてログインする場合、Open OnDemand用の初期パスワードが必要です。
-初期パスワードの発行は、[お問い合わせ](../contact.md)ページを参照のうえ、<abci3-qa@abci.ai> までご依頼ください。
+初期パスワードの発行は[利用者ポータル](https://portal.v3.abci.ai/)から行うことができます。
 
-初期パスワードの変更については[初期パスワード変更方法](#how-to-change-the-initial-password)を参照してください。
-
+初期パスワード発行の詳細については[ABCI 3.0 Portal Guide](https://docs.abci.ai/v3/portal/ja/02/#210-ood)を参照してください。
 
 ## 初期パスワード変更方法 {#how-to-change-the-initial-password}
 
-初期パスワードを変更するにはインタラクティブノードで、`passwd`コマンドを実行します。
+初期パスワードを変更するには、インタラクティブノードで`passwd`コマンドを実行します。
 
 ```
 [username@login1 ~]$ passwd
@@ -33,6 +32,12 @@ passwd: all authentication tokens updated successfully.
 [username@login1 ~]$
 ```
 
+!!! warning
+    パスワード規約は以下の通りです。
+
+    - 12文字以上のランダムに並べた文字列を指定してください。文字をランダムに選ぶ方法として、パスワード作成用のソフトウェアを用いるなどして、自動的に生成することを推奨します。
+    - 英大文字[A-Z]、英小文字[a-z]、数字[0-9]、記号の4種類をすべて使用してください。
+    - 使用可能な記号は次の33種類です。(空白) ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
 
 ## ログイン方法 {#login}
 

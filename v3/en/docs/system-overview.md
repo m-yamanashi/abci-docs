@@ -89,12 +89,6 @@ Below is a list of shared file systems provided by the ABCI system using the abo
 | ABCI Cloud Storage | /groups_s3 | 1PB | Lustre |  |
 <!--| ABCI Object area | /groups_s3 | 1 PB | Lustre |  |-->
 
-The following file systems are mounted for the purpose of data migration.
-
-| Usage | Mount point | Effective capacity | File system | Notes |
-|:--|:--|:--|:--|:--|
-| Archive | /groups-2.0 | 10.8 PB | Lustre | Read-only. Group area used in ABCI 2.0 |
-
 
 Interactive nodes, and compute nodes (H) mount the shared file systems, and users can access these file systems from common mount points.
 
@@ -102,7 +96,7 @@ Besides this, these nodes each have local storage that can be used as a local sc
 
 | Node type | Mount point | Capacity | File system | Notes |
 |:--|:--|:--|:--|:--|
-| Interactive node | /local | 12 TB | XFS | |
+| Interactive node | /local | 12 TB | XFS | [Using /local on interactive nodes](tips/interactive_node_local_fs.md) |
 | Compute node (H) | /local1 | 7 TB | XFS |  |
 |                 | /local2 | 7 TB | XFS | Includes BeeGFS |
 
@@ -112,16 +106,16 @@ Storage Service Specifications:
 | :- | :- | :- | :- | :- | :- | :- |
 | /home | 2TB | 2TB | | | Free | Free |
 | /groups | 0TB | 1000TB | 200 million | 600 million | 5 points per month per 1TB | 2.5 points per month per 1TB |
-| /groups-2.0 | - | - | - | - | Free | Free |
+| Cloud Storage | 0TB | 50TB | - | - | 5 points per month per 1TB | 2.5 points per month per 1TB |
 
 !!! note
     * The storage service allocates 1,099,511,627,776 bytes per 1TB. 
     * The /home file system is shared by all users, and its total number of inodes is about 25 billion. There is no limit on the number of inodes in the /home directory for individual users.
     * The capacity of /groups can be increased up to 1,000TB via the user portal[^footnote01]. 
     * If you need more than 1,000TB of capacity or want to increase the inode limit in /groups, you need to apply via email. For application procedures, please refer to [Request for Increasing Group Area Quota](requests/group-area-quota-increase.md). 
-    * The /groups-2.0 service will be discontinued at the end of September 2025. For more details, please refer to [Future Storage Service Announcements](https://abci.ai/news/2024/09/04/en_storage_after_nov2024.html).
+    * The /groups-2.0 service was discontinued at the end of September 2025. For more details, please refer to [Future Storage Service Announcements](https://abci.ai/news/2024/09/04/en_storage_after_nov2024.html).
 
-[^footnote01]: The user portal is scheduled to be available from March 18, 2025.
+[^footnote01]: The user portal has been available since March 18, 2025.
 
 ## Software
 
@@ -132,31 +126,34 @@ The software available on the ABCI system is shown below.
 | OS | Rocky Linux | - | 9.4 |
 | OS | Red Hat Enterprise Linux | 9.4 | - |
 | Job Scheduler | Altair PBS Professional | 2022.1.6 | 2022.1.6 |
-| Development Environment | CUDA Toolkit | 11.8.0<br>12.0.1<br>12.1.1<br>12.2.2<br>12.3.2<br>12.4.1<br>12.5.1<br>12.6.1<br>12.8.1<br>12.9.1 | 11.8.0<br>12.0.1<br>12.1.1<br>12.2.2<br>12.3.2<br>12.4.1<br>12.5.1<br>12.6.1<br>12.8.1<br>12.9.1 |
+| Development Environment | cmake | 3.26.5<br>4.1.1 | 3.26.5<br>4.1.1 |
+| | CUDA Toolkit | 11.8.0<br>12.0.1<br>12.1.1<br>12.2.2<br>12.3.2<br>12.4.1<br>12.5.1<br>12.6.1<br>12.8.1<br>12.9.1<br>13.0.1 | 11.8.0<br>12.0.1<br>12.1.1<br>12.2.2<br>12.3.2<br>12.4.1<br>12.5.1<br>12.6.1<br>12.8.1<br>12.9.1<br>13.0.1 |
 | | Intel oneAPI<br>(compilers and libraries) | 2024.2.1 | 2024.2.1 |
-| | GCC | 11.5.0<br>13.2.0 | 11.4.1<br>13.2.0 |
-| | Python | 3.9.21<br>3.12.9<br>3.13.2 | 3.9.21<br>3.12.9<br>3.13.2 |
-| | Ruby | 3.0.7 | 3.0.4 |
+| | GCC | 11.5.0<br>13.2.0 | 11.5.0<br>13.2.0 |
+| | Python | 3.9.25<br>3.12.9<br>3.13.2 | 3.9.23<br>3.12.9<br>3.13.2 |
+| | Ruby | 3.0.7 | 3.0.7 |
 | | R | 4.5.1 | 4.5.1 |
-| | Java | 17.0.16 | 17.0.16 |
+| | Java | 17.0.17 | 17.0.16 |
+| | OpenJDK | 25.0.0 | 25.0.0 |
 | | Scala | 3.5.2 | 3.5.2 |
 | | Perl | 5.32.1 | 5.32.1 |
-| | Go | 1.24.6 | 1.24.4 |
-| File System | DDN Lustre | 2.14.0_ddn196 | 2.14.0_ddn196 |
+| | Go | 1.25.1<br>1.25.3 | 1.25.1<br>1.25.3 |
+| File System | DDN Lustre | 2.14.0_ddn230 | 2.14.0_ddn230 |
 | | BeeOND | - | 7.4.5 |
 | Object Storage | s3cmd | 2.4.0 | 2.4.0 |
-| Container | SingularityCE | 4.1.5 | 4.1.5 |
+| Container | SingularityCE | 4.3.3<br>4.3.5<br>4.3.6 | 4.1.5<br>4.3.3<br>4.3.6 |
+| | SingularityPRO | 4.1.12 | 4.1.12 |
 | MPI | Intel MPI | 2021.13 | 2021.13 |
 | | hpcx | 2.20 | 2.20 |
 | | hpcx-debug | 2.20 | 2.20 |
 | | hpcx-mt | 2.20 | 2.20 |
 | | hpcx-prof | 2.20 | 2.20 |
-| Library | cuDNN | 9.5.1<br>9.12.0 | 9.5.1<br>9.12.0 |
-| | NCCL | 2.23.4-1<br>2.25.1-1 | 2.23.4-1<br>2.25.1-1 |
+| Library | cuDNN | 9.5.1<br>9.6.0<br>9.7.1<br>9.8.0<br>9.9.0<br>9.10.2<br>9.11.1<br>9.12.0<br>9.13.0<br>9.18.1 | 9.5.1<br>9.6.0<br>9.7.1<br>9.8.0<br>9.9.0<br>9.10.2<br>9.11.1<br>9.12.0<br>9.13.0<br>9.18.1 |
+| | NCCL | 2.23.4-1<br>2.24.3-1<br>2.25.1-1<br>2.26.6-1<br>2.27.7-1<br>2.28.3-1 | 2.23.4-1<br>2.24.3-1<br>2.25.1-1<br>2.26.6-1<br>2.27.7-1<br>2.28.3-1 |
 | | gdrcopy | 2.4.1 | 2.4.1 |
 | | UCX | 1.17 | 1.17 |
 | | Intel MKL | 2024.2.1 | 2024.2.1 |
 | Utility | aws-cli | 1.29.62 | 1.29.62 |
-| | s3fs-fuse | 1.94 | 1.94 |
-| | rclone | 1.70.3 | 1.70.3 |
+| | rclone | 1.70.3<br>1.71.0 | 1.70.3<br>1.71.0 |
+| | s3fs-fuse | 1.94<br>1.95 | 1.94<br>1.95 |
 
