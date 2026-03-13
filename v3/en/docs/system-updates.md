@@ -1,5 +1,8 @@
 # System Updates
 
+## 2026-04-30 {#2026-04-30}
+
+The maximum expiration time for [presigned URLs](abci-cloudstorage/presigned-urls.md) has been set to 7 days.
 
 ## 2026-03-11 {#2026-03-11}
 
